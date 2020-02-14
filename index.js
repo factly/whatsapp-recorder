@@ -23,7 +23,7 @@ app.use(cors({
   origin: '*'
 }));
 
-app.post('/save', async function (req, res) {
+app.post('/message', async function (req, res) {
     // Create a new MongoClient
     var url = process.env.MONGO_URI
     var name = process.env.MONGO_DB
@@ -35,11 +35,18 @@ app.post('/save', async function (req, res) {
         return client.db(name) 
     })
     
-    req.body['insertTime'] = new Date()
-    return db.collection("test").insertOne(req.body, function(err, result) {
+    var data = {}
+    data['number'] = req.body['id']
+    data['file'] = req.body['file']
+    data['text'] = req.body['text']
+    data['source'] = req.body['source_platform']
+    data['timestamp'] = req.body['timestamp']
+    data['createdAt'] = new Date()
+
+    return db.collection("whatsapp_messages").insertOne(data, function(err, result) {
         if(err)
             return res.sendStatus(500)
-        return res.sendStatus(200)
+        return res.sendStatus(201)
     })
 
 });
